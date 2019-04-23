@@ -86,7 +86,7 @@ void AuthenticateTask::processResponse(QJsonObject responseData)
     // existing one.
     qDebug() << "Getting client token.";
     QString clientToken = responseData.value("clientToken").toString("");
-    if (clientToken.isEmpty())
+    /*if (clientToken.isEmpty())
     {
         // Fail if the server gave us an empty client token
         changeState(STATE_FAILED_HARD, tr("Authentication server didn't send a client token."));
@@ -96,19 +96,19 @@ void AuthenticateTask::processResponse(QJsonObject responseData)
     {
         changeState(STATE_FAILED_HARD, tr("Authentication server attempted to change the client token. This isn't supported."));
         return;
-    }
+    }*/
     // Set the client token.
     m_account->m_clientToken = clientToken;
 
     // Now, we set the access token.
     qDebug() << "Getting access token.";
     QString accessToken = responseData.value("accessToken").toString("");
-    if (accessToken.isEmpty())
+    /*if (accessToken.isEmpty())
     {
         // Fail if the server didn't give us an access token.
         changeState(STATE_FAILED_HARD, tr("Authentication server didn't send an access token."));
         return;
-    }
+    }*/
     // Set the access token.
     m_account->m_accessToken = accessToken;
 
@@ -149,7 +149,7 @@ void AuthenticateTask::processResponse(QJsonObject responseData)
     qDebug() << "Setting current profile.";
     QJsonObject currentProfile = responseData.value("selectedProfile").toObject();
     QString currentProfileId = currentProfile.value("id").toString("");
-    if (currentProfileId.isEmpty())
+    /*if (currentProfileId.isEmpty())
     {
         changeState(STATE_FAILED_HARD, tr("Authentication server didn't specify a currently selected profile. The account exists, but likely isn't premium."));
         return;
@@ -158,7 +158,7 @@ void AuthenticateTask::processResponse(QJsonObject responseData)
     {
         changeState(STATE_FAILED_HARD, tr("Authentication server specified a selected profile that wasn't in the available profiles list."));
         return;
-    }
+    }*/
 
     // this is what the vanilla launcher passes to the userProperties launch param
     if (responseData.contains("user"))

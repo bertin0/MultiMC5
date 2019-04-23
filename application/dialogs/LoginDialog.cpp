@@ -73,12 +73,12 @@ void LoginDialog::on_passTextBox_textEdited(const QString &newText)
 
 void LoginDialog::onTaskFailed(const QString &reason)
 {
-    // Set message
+    /*// Set message
     ui->label->setText("<span style='color:red'>" + reason + "</span>");
 
     // Re-enable user-interaction
     setUserInputsEnabled(true);
-    ui->progressBar->setVisible(false);
+    ui->progressBar->setVisible(false);*/
 }
 
 void LoginDialog::onTaskSucceeded()
