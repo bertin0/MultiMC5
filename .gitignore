@@ -16,7 +16,12 @@ CMakeLists.txt.user.*
 /.project
 /.settings
 /.idea
+/.vscode
 cmake-build-*/
+
+# Install dirs
+install
+/install-*
 
 # Build dirs
 build
