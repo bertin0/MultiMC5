@@ -43,12 +43,12 @@ MojangAccountPtr MojangAccount::loadFromJson(const QJsonObject &object)
     QString accessToken = object.value("accessToken").toString("");
 
     QJsonArray profileArray = object.value("profiles").toArray();
-    if (profileArray.size() < 1)
+    /*if (profileArray.size() < 1)
     {
         qCritical() << "Can't load Mojang account with username \"" << username
                      << "\". No profiles found.";
         return nullptr;
-    }
+    }*/
 
     QList<AccountProfile> profiles;
     for (QJsonValue profileVal : profileArray)
@@ -165,7 +165,8 @@ const AccountProfile *MojangAccount::currentProfile() const
 AccountStatus MojangAccount::accountStatus() const
 {
     if (m_accessToken.isEmpty())
-        return NotVerified;
+        //return NotVerified;
+        return Verified;
     else
         return Verified;
 }
@@ -179,13 +180,15 @@ std::shared_ptr<YggdrasilTask> MojangAccount::login(AuthSessionPtr session, QStr
     {
         if (session)
         {
-            session->status = AuthSession::RequiresPassword;
+            //session->status = AuthSession::RequiresPassword;
             fillSession(session);
         }
         return nullptr;
     }
 
-    if(accountStatus() == Verified && !session->wants_online)
+    //Filip added session!=nullptr check because of segfault caused by changing
+    //accountStatus() to always return Verified.
+    if(accountStatus() == Verified && session!=nullptr && !session->wants_online)
     {
         session->status = AuthSession::PlayableOffline;
         session->auth_server_online = false;

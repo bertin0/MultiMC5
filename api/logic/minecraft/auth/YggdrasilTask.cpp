@@ -134,10 +134,11 @@ void YggdrasilTask::processReply()
     case QNetworkReply::ContentOperationNotPermittedError:
         break;
     default:
-        changeState(STATE_FAILED_SOFT,
+        /*changeState(STATE_FAILED_SOFT,
                     tr("Authentication operation failed due to a network error: %1 (%2)")
                         .arg(m_netReply->errorString()).arg(m_netReply->error()));
-        return;
+        return;*/
+        break;
     }
 
     // Try to parse the response regardless of the response code.
@@ -148,7 +149,8 @@ void YggdrasilTask::processReply()
     // Check the response code.
     int responseCode = m_netReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
-    if (responseCode == 200)
+    //Filip added the 403 response code - for invalid credentials.
+    if (responseCode == 200 || 403)
     {
         // If the response code was 200, then there shouldn't be an error. Make sure
         // anyways.

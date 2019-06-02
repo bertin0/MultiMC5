@@ -68,7 +68,7 @@ void RefreshTask::processResponse(QJsonObject responseData)
     // If we already have a client token, make sure the one the server gave us matches our
     // existing one.
     QString clientToken = responseData.value("clientToken").toString("");
-    if (clientToken.isEmpty())
+    /*if (clientToken.isEmpty())
     {
         // Fail if the server gave us an empty client token
         changeState(STATE_FAILED_HARD, tr("Authentication server didn't send a client token."));
@@ -78,27 +78,27 @@ void RefreshTask::processResponse(QJsonObject responseData)
     {
         changeState(STATE_FAILED_HARD, tr("Authentication server attempted to change the client token. This isn't supported."));
         return;
-    }
+    }*/
 
     // Now, we set the access token.
     qDebug() << "Getting new access token.";
     QString accessToken = responseData.value("accessToken").toString("");
-    if (accessToken.isEmpty())
+    /*if (accessToken.isEmpty())
     {
         // Fail if the server didn't give us an access token.
         changeState(STATE_FAILED_HARD, tr("Authentication server didn't send an access token."));
         return;
-    }
+    }*/
 
     // we validate that the server responded right. (our current profile = returned current
     // profile)
     QJsonObject currentProfile = responseData.value("selectedProfile").toObject();
     QString currentProfileId = currentProfile.value("id").toString("");
-    if (m_account->currentProfile()->id != currentProfileId)
+    /*if (m_account->currentProfile()->id != currentProfileId)
     {
-        changeState(STATE_FAILED_HARD, tr("Authentication server didn't specify the same prefile as expected."));
+        changeState(STATE_FAILED_HARD, tr("Authentication server didn't specify the same profile as expected."));
         return;
-    }
+    }*/
 
     // this is what the vanilla launcher passes to the userProperties launch param
     if (responseData.contains("user"))
