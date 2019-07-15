@@ -234,7 +234,7 @@ void InstanceList::deleteInstance(const InstanceId& id)
     auto inst = getInstanceById(id);
     if(!inst)
     {
-        qDebug() << "Cannot delete instance" << id << " No such instance is present.";
+        qDebug() << "Cannot delete instance" << id << ". No such instance is present (deleted externally?).";
         return;
     }
 
@@ -819,6 +819,7 @@ bool InstanceList::commitStagedInstance(const QString& path, const QString& inst
         instanceSet.insert(instID);
         m_groups.insert(groupName);
         emit instancesChanged();
+        emit instanceSelectRequest(instID);
     }
     saveGroupList();
     return true;

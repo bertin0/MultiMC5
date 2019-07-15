@@ -702,6 +702,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new MainWindow
     // model reset -> selection is invalid. All the instance pointers are wrong.
     connect(MMC->instances().get(), &InstanceList::dataIsInvalid, this, &MainWindow::selectionBad);
 
+    // handle newly added instances
+    connect(MMC->instances().get(), &InstanceList::instanceSelectRequest, this, &MainWindow::instanceSelectRequest);
+
     // When the global settings page closes, we want to know about it and update our state
     connect(MMC, &MultiMC::globalSettingsClosed, this, &MainWindow::globalSettingsClosed);
 
@@ -1664,6 +1667,7 @@ void MainWindow::on_actionDeleteInstance_triggered()
     {
         return;
     }
+    auto id = m_selectedInstance->id();
     auto response = CustomMessageBox::selectable(
         this,
         tr("CAREFUL!"),
@@ -1674,7 +1678,7 @@ void MainWindow::on_actionDeleteInstance_triggered()
     )->exec();
     if (response == QMessageBox::Yes)
     {
-        MMC->instances()->deleteInstance(m_selectedInstance->id());
+        MMC->instances()->deleteInstance(id);
     }
 }
 
@@ -1834,6 +1838,11 @@ void MainWindow::instanceChanged(const QModelIndex &current, const QModelIndex &
         selectionBad();
         return;
     }
+}
+
+void MainWindow::instanceSelectRequest(QString id)
+{
+    setSelectedInstanceById(id);
 }
 
 void MainWindow::instanceDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)

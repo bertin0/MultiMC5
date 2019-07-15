@@ -20,6 +20,7 @@
 #include "pages/BasePage.h"
 #include <MultiMC.h>
 #include "tasks/Task.h"
+#include "modplatform/flame/UrlResolvingTask.h"
 
 namespace Ui
 {
@@ -37,7 +38,7 @@ public:
     virtual ~TwitchPage();
     virtual QString displayName() const override
     {
-        return tr("Twitch");
+        return tr("Twitch URL");
     }
     virtual QIcon icon() const override
     {
@@ -55,7 +56,14 @@ public:
 
     void openedImpl() override;
 
+    void setUrl(const QString & url);
+
+private slots:
+    void triggerCheck(bool checked);
+    void checkDone();
+
 private:
     Ui::TwitchPage *ui = nullptr;
     NewInstanceDialog* dialog = nullptr;
+    shared_qobject_ptr<Flame::UrlResolvingTask> m_modIdResolver;
 };
