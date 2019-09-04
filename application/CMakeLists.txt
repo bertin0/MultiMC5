@@ -159,8 +159,6 @@ SET(MULTIMC_SOURCES
     dialogs/IconPickerDialog.h
     dialogs/LoginDialog.cpp
     dialogs/LoginDialog.h
-    dialogs/ModEditDialogCommon.cpp
-    dialogs/ModEditDialogCommon.h
     dialogs/NewComponentDialog.cpp
     dialogs/NewComponentDialog.h
     dialogs/NewInstanceDialog.cpp
@@ -213,10 +211,15 @@ SET(MULTIMC_SOURCES
     widgets/VersionSelectWidget.h
     widgets/ProgressWidget.h
     widgets/ProgressWidget.cpp
+    widgets/WideBar.h
+    widgets/WideBar.cpp
 
     # GUI - instance group view
     groupview/GroupedProxyModel.cpp
     groupview/GroupedProxyModel.h
+    groupview/AccessibleGroupView.cpp
+    groupview/AccessibleGroupView.h
+    groupview/AccessibleGroupView_p.h
     groupview/GroupView.cpp
     groupview/GroupView.h
     groupview/InstanceDelegate.cpp

@@ -27,7 +27,6 @@
 #include "dialogs/CustomMessageBox.h"
 #include "dialogs/VersionSelectDialog.h"
 #include "dialogs/NewComponentDialog.h"
-#include "dialogs/ModEditDialogCommon.h"
 
 #include "dialogs/ProgressDialog.h"
 #include <GuiUtil.h>
@@ -40,7 +39,7 @@
 
 #include "minecraft/ComponentList.h"
 #include "minecraft/auth/MojangAccountList.h"
-#include "minecraft/Mod.h"
+#include "minecraft/mod/Mod.h"
 #include "icons/IconList.h"
 #include "Exception.h"
 #include "Version.h"
@@ -111,21 +110,8 @@ VersionPage::VersionPage(MinecraftInstance *inst, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::VersionPage), m_inst(inst)
 {
     ui->setupUi(this);
-    auto labelSelection = new QLabel(tr("Selection"));
-    labelSelection->setAlignment(Qt::AlignHCenter);
-    ui->toolBar->insertWidget(ui->actionChange_version, labelSelection);
 
-    auto labelEdit = new QLabel(tr("Edit"));
-    labelEdit->setAlignment(Qt::AlignHCenter);
-    ui->toolBar->insertWidget(ui->actionCustomize, labelEdit);
-
-    auto labelInstall = new QLabel(tr("Install"));
-    labelInstall->setAlignment(Qt::AlignHCenter);
-    ui->toolBar->insertWidget(ui->actionInstall_Forge, labelInstall);
-
-    auto labelAdvanced = new QLabel(tr("Advanced"));
-    labelAdvanced->setAlignment(Qt::AlignHCenter);
-    ui->toolBar->insertWidget(ui->actionAdd_to_Minecraft_jar, labelAdvanced);
+    ui->toolBar->insertSpacer(ui->actionReload);
 
     m_profile = m_inst->getComponentList();
 
@@ -136,6 +122,8 @@ VersionPage::VersionPage(MinecraftInstance *inst, QWidget *parent)
     ui->packageView->setModel(proxy);
     ui->packageView->installEventFilter(this);
     ui->packageView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->packageView->setContextMenuPolicy(Qt::CustomContextMenu);
+
     connect(ui->packageView->selectionModel(), &QItemSelectionModel::currentChanged, this, &VersionPage::versionCurrent);
     auto smodel = ui->packageView->selectionModel();
     connect(smodel, &QItemSelectionModel::currentChanged, this, &VersionPage::packageCurrent);
@@ -145,11 +133,19 @@ VersionPage::VersionPage(MinecraftInstance *inst, QWidget *parent)
     updateVersionControls();
     preselect(0);
     connect(m_inst, &BaseInstance::runningStatusChanged, this, &VersionPage::updateRunningStatus);
+    connect(ui->packageView, &ModListView::customContextMenuRequested, this, &VersionPage::ShowContextMenu);
 }
 
 VersionPage::~VersionPage()
 {
     delete ui;
+}
+
+void VersionPage::ShowContextMenu(const QPoint& pos)
+{
+    auto menu = ui->toolBar->createContextMenu(this, tr("Context menu"));
+    menu->exec(ui->packageView->mapToGlobal(pos));
+    delete menu;
 }
 
 void VersionPage::packageCurrent(const QModelIndex &current, const QModelIndex &previous)
@@ -383,7 +379,7 @@ void VersionPage::on_actionChange_version_triggered()
     m_container->refreshContainer();
 }
 
-void VersionPage::on_actionDownload_triggered()
+void VersionPage::on_actionDownload_All_triggered()
 {
     if (!MMC->accounts()->anyAccountIsValid())
     {

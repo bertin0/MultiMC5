@@ -16,8 +16,16 @@
 #pragma once
 #include <QFileInfo>
 #include <QDateTime>
+#include <QList>
+#include <memory>
 
-class Mod
+#include "multimc_logic_export.h"
+
+#include "ModDetails.h"
+
+
+
+class MULTIMC_LOGIC_EXPORT Mod
 {
 public:
     enum ModType
@@ -29,6 +37,7 @@ public:
         MOD_LITEMOD, //!< The mod is a litemod
     };
 
+    Mod() = default;
     Mod(const QFileInfo &file);
 
     QFileInfo filename() const
@@ -39,53 +48,13 @@ public:
     {
         return m_mmc_id;
     }
-    QString mod_id() const
-    {
-        return m_mod_id;
-    }
     ModType type() const
     {
         return m_type;
     }
-    QString mcversion() const
-    {
-        return m_mcversion;
-    }
-    ;
     bool valid()
     {
         return m_type != MOD_UNKNOWN;
-    }
-    QString name() const
-    {
-        QString name = m_name.trimmed();
-        if(name.isEmpty() || name == "Example Mod")
-        {
-            return m_mmc_id;
-        }
-        return m_name;
-    }
-
-    QString version() const;
-
-    QString homeurl() const
-    {
-        return m_homeurl;
-    }
-
-    QString description() const
-    {
-        return m_description;
-    }
-
-    QString authors() const
-    {
-        return m_authors;
-    }
-
-    QString credits() const
-    {
-        return m_credits;
     }
 
     QDateTime dateTimeChanged() const
@@ -98,46 +67,51 @@ public:
         return m_enabled;
     }
 
+    const ModDetails &details() const;
+
+    QString name() const;
+    QString version() const;
+    QString homeurl() const;
+    QString description() const;
+    QStringList authors() const;
+
     bool enable(bool value);
 
     // delete all the files of this mod
     bool destroy();
-    // replace this mod with a copy of the other
-    bool replace(Mod &with);
+
     // change the mod's filesystem path (used by mod lists for *MAGIC* purposes)
     void repath(const QFileInfo &file);
 
-    // WEAK compare operator - used for replacing mods
-    bool operator==(const Mod &other) const;
-    bool strongCompare(const Mod &other) const;
-
-private:
-    void ReadMCModInfo(QByteArray contents);
-    void ReadFabricModInfo(QByteArray contents);
-    void ReadForgeInfo(QByteArray contents);
-    void ReadLiteModInfo(QByteArray contents);
+    bool shouldResolve() {
+        return !m_resolving && !m_resolved;
+    }
+    bool isResolving() {
+        return m_resolving;
+    }
+    int resolutionTicket()
+    {
+        return m_resolutionTicket;
+    }
+    void setResolving(bool resolving, int resolutionTicket) {
+        m_resolving = resolving;
+        m_resolutionTicket = resolutionTicket;
+    }
+    void finishResolvingWithDetails(std::shared_ptr<ModDetails> details){
+        m_resolving = false;
+        m_resolved = true;
+        m_localDetails = details;
+    }
 
 protected:
-
-    // FIXME: what do do with those? HMM...
-    /*
-    void ReadModInfoData(QString info);
-    void ReadForgeInfoData(QString infoFileData);
-    */
-
     QFileInfo m_file;
     QDateTime m_changedDateTime;
     QString m_mmc_id;
-    QString m_mod_id;
-    bool m_enabled = true;
     QString m_name;
-    QString m_version;
-    QString m_mcversion;
-    QString m_homeurl;
-    QString m_updateurl;
-    QString m_description;
-    QString m_authors;
-    QString m_credits;
-
-    ModType m_type;
+    bool m_enabled = true;
+    bool m_resolving = false;
+    bool m_resolved = false;
+    int m_resolutionTicket = 0;
+    ModType m_type = MOD_UNKNOWN;
+    std::shared_ptr<ModDetails> m_localDetails;
 };

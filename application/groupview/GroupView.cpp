@@ -25,6 +25,7 @@
 #include <QMimeData>
 #include <QCache>
 #include <QScrollBar>
+#include <QAccessible>
 
 #include "VisualGroup.h"
 #include <QDebug>
@@ -87,6 +88,18 @@ void GroupView::rowsRemoved()
 {
     scheduleDelayedItemsLayout();
 }
+
+void GroupView::currentChanged(const QModelIndex& current, const QModelIndex& previous)
+{
+    QAbstractItemView::currentChanged(current, previous);
+    // TODO: for accessibility support, implement+register a factory, steal QAccessibleTable from Qt and return an instance of it for GroupView.
+    if (QAccessible::isActive() && current.isValid()) {
+        QAccessibleEvent event(this, QAccessible::Focus);
+        event.setChild(current.row());
+        QAccessible::updateAccessibility(&event);
+    }
+}
+
 
 class LocaleString : public QString
 {
@@ -162,6 +175,9 @@ void GroupView::updateGeometries()
             else
             {
                 auto cat = new VisualGroup(groupName, this);
+                if(fVisibility) {
+                    cat->collapsed = fVisibility(groupName);
+                }
                 cats.insert(groupName, cat);
                 cat->update();
             }
@@ -371,6 +387,8 @@ void GroupView::mouseReleaseEvent(QMouseEvent *event)
         if (state() == ExpandingState)
         {
             m_pressedCategory->collapsed = false;
+            emit groupStateChanged(m_pressedCategory->text, false);
+
             updateGeometries();
             viewport()->update();
             event->accept();
@@ -379,6 +397,8 @@ void GroupView::mouseReleaseEvent(QMouseEvent *event)
         else if (state() == CollapsingState)
         {
             m_pressedCategory->collapsed = true;
+            emit groupStateChanged(m_pressedCategory->text, true);
+
             updateGeometries();
             viewport()->update();
             event->accept();
@@ -594,8 +614,7 @@ void GroupView::dropEvent(QDropEvent *event)
             const QString categoryText = category->text;
             if (model()->dropMimeData(event->mimeData(), Qt::MoveAction, row, 0, QModelIndex()))
             {
-                model()->setData(model()->index(row, 0), categoryText,
-                                GroupViewRoles::GroupRole);
+                model()->setData(model()->index(row, 0), categoryText, GroupViewRoles::GroupRole);
                 event->setDropAction(Qt::MoveAction);
                 event->accept();
             }

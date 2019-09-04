@@ -36,6 +36,7 @@ LanguageSelectionWidget::LanguageSelectionWidget(QWidget *parent) :
     languageView->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
     languageView->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     connect(languageView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &LanguageSelectionWidget::languageRowChanged);
+    verticalLayout->setContentsMargins(0,0,0,0);
 }
 
 QString LanguageSelectionWidget::getSelectedLanguageKey() const
@@ -49,7 +50,7 @@ void LanguageSelectionWidget::retranslate()
     QString text =
         tr("Don't see your language or the quality is poor?") +
         "<br/>" +
-        QString("<a href=\"https://github.com/MultiMC/MultiMC5/wiki/Translating-MultiMC\">%1</a>").arg("Help us with translations!");
+        QString("<a href=\"https://github.com/MultiMC/MultiMC5/wiki/Translating-MultiMC\">%1</a>").arg(tr("Help us with translations!"));
     helpUsLabel->setText(text);
 
 }

@@ -16,13 +16,17 @@
 #pragma once
 
 #include <QList>
+#include <QMap>
+#include <QSet>
 #include <QString>
 #include <QDir>
 #include <QAbstractListModel>
 
-#include "minecraft/Mod.h"
+#include "Mod.h"
 
 #include "multimc_logic_export.h"
+#include "ModFolderLoadTask.h"
+#include "LocalModParseTask.h"
 
 class LegacyInstance;
 class BaseInstance;
@@ -32,7 +36,7 @@ class QFileSystemWatcher;
  * A legacy mod list.
  * Backed by a folder.
  */
-class MULTIMC_LOGIC_EXPORT SimpleModList : public QAbstractListModel
+class MULTIMC_LOGIC_EXPORT ModFolderModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
@@ -40,11 +44,16 @@ public:
     {
         ActiveColumn = 0,
         NameColumn,
-        DateColumn,
         VersionColumn,
+        DateColumn,
         NUM_COLUMNS
     };
-    SimpleModList(const QString &dir);
+    enum ModStatusAction {
+        Disable,
+        Enable,
+        Toggle
+    };
+    ModFolderModel(const QString &dir);
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
@@ -78,7 +87,7 @@ public:
     }
 
     /// Reloads the mod list and returns true if the list changed.
-    virtual bool update();
+    bool update();
 
     /**
      * Adds the given mod to the list at the given index - if the list supports custom ordering
@@ -86,15 +95,15 @@ public:
     bool installMod(const QString& filename);
 
     /// Deletes all the selected mods
-    virtual bool deleteMods(const QModelIndexList &indexes);
+    bool deleteMods(const QModelIndexList &indexes);
 
     /// Enable or disable listed mods
-    virtual bool enableMods(const QModelIndexList &indexes, bool enable = true);
+    bool setModStatus(const QModelIndexList &indexes, ModStatusAction action);
 
     void startWatching();
     void stopWatching();
 
-    virtual bool isValid();
+    bool isValid();
 
     QDir dir()
     {
@@ -112,14 +121,25 @@ public slots:
 private
 slots:
     void directoryChanged(QString path);
+    void finishUpdate();
+    void finishModParse(int token);
 
 signals:
-    void changed();
+    void updateFinished();
+
+private:
+    void resolveMod(Mod& m);
+    bool setModStatus(int index, ModStatusAction action);
 
 protected:
     QFileSystemWatcher *m_watcher;
     bool is_watching = false;
+    ModFolderLoadTask::ResultPtr m_update;
+    bool scheduled_update = false;
     bool interaction_disabled = false;
     QDir m_dir;
+    QMap<QString, int> modsIndex;
+    QMap<int, LocalModParseTask::ResultPtr> activeTickets;
+    int nextResolutionTicket = 0;
     QList<Mod> mods;
 };
