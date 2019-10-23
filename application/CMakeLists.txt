@@ -125,8 +125,6 @@ SET(MULTIMC_SOURCES
     pages/global/ProxyPage.h
     pages/global/PasteEEPage.cpp
     pages/global/PasteEEPage.h
-    pages/global/PackagesPage.cpp
-    pages/global/PackagesPage.h
 
     # GUI - platform pages
     pages/modplatform/VanillaPage.cpp
@@ -137,8 +135,6 @@ SET(MULTIMC_SOURCES
     pages/modplatform/FtbListModel.cpp
     pages/modplatform/TwitchPage.cpp
     pages/modplatform/TwitchPage.h
-    pages/modplatform/TechnicPage.cpp
-    pages/modplatform/TechnicPage.h
     pages/modplatform/ImportPage.cpp
     pages/modplatform/ImportPage.h
 
@@ -182,6 +178,8 @@ SET(MULTIMC_SOURCES
     widgets/Common.h
     widgets/CustomCommands.cpp
     widgets/CustomCommands.h
+    widgets/DropLabel.cpp
+    widgets/DropLabel.h
     widgets/FocusLineEdit.cpp
     widgets/FocusLineEdit.h
     widgets/IconLabel.cpp
@@ -251,13 +249,11 @@ SET(MULTIMC_UIS
     pages/global/MultiMCPage.ui
     pages/global/ProxyPage.ui
     pages/global/PasteEEPage.ui
-    pages/global/PackagesPage.ui
 
     # Platform pages
     pages/modplatform/VanillaPage.ui
     pages/modplatform/FTBPage.ui
     pages/modplatform/TwitchPage.ui
-    pages/modplatform/TechnicPage.ui
     pages/modplatform/ImportPage.ui
 
     # Dialogs
