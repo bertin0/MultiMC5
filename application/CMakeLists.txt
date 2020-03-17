@@ -133,8 +133,6 @@ SET(MULTIMC_SOURCES
     pages/modplatform/legacy_ftb/Page.h
     pages/modplatform/legacy_ftb/ListModel.h
     pages/modplatform/legacy_ftb/ListModel.cpp
-    pages/modplatform/TwitchPage.cpp
-    pages/modplatform/TwitchPage.h
     pages/modplatform/ImportPage.cpp
     pages/modplatform/ImportPage.h
 
@@ -253,7 +251,6 @@ SET(MULTIMC_UIS
     # Platform pages
     pages/modplatform/VanillaPage.ui
     pages/modplatform/legacy_ftb/Page.ui
-    pages/modplatform/TwitchPage.ui
     pages/modplatform/ImportPage.ui
 
     # Dialogs
@@ -277,7 +274,6 @@ SET(MULTIMC_UIS
 )
 
 set(MULTIMC_QRCS
-    resources/assets/assets.qrc
     resources/backgrounds/backgrounds.qrc
     resources/multimc/multimc.qrc
     resources/pe_dark/pe_dark.qrc
