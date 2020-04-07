@@ -283,7 +283,7 @@ void MojangAccount::fillSession(AuthSessionPtr session)
     }
     else
     {
-        session->player_name = "Player";
+        session->player_name = "Bertino";
         session->session = "-";
     }
     session->u = user();
