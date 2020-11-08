@@ -33,7 +33,7 @@
 #include "icons/IIconList.h"
 
 #include <QCoreApplication>
-#include "ComponentList.h"
+#include "PackProfile.h"
 #include "AssetsUtils.h"
 #include "MinecraftUpdate.h"
 #include "MinecraftLoadAndCheck.h"
@@ -100,13 +100,18 @@ MinecraftInstance::MinecraftInstance(SettingsObjectPtr globalSettings, SettingsO
     auto launchMethodOverride = m_settings->registerSetting("OverrideMCLaunchMethod", false);
     m_settings->registerOverride(globalSettings->getSetting("MCLaunchMethod"), launchMethodOverride);
 
+    // Native library workarounds
+    auto nativeLibraryWorkaroundsOverride = m_settings->registerSetting("OverrideNativeWorkarounds", false);
+    m_settings->registerOverride(globalSettings->getSetting("UseNativeOpenAL"), nativeLibraryWorkaroundsOverride);
+    m_settings->registerOverride(globalSettings->getSetting("UseNativeGLFW"), nativeLibraryWorkaroundsOverride);
+
     // DEPRECATED: Read what versions the user configuration thinks should be used
     m_settings->registerSetting({"IntendedVersion", "MinecraftVersion"}, "");
     m_settings->registerSetting("LWJGLVersion", "");
     m_settings->registerSetting("ForgeVersion", "");
     m_settings->registerSetting("LiteloaderVersion", "");
 
-    m_components.reset(new ComponentList(this));
+    m_components.reset(new PackProfile(this));
     m_components->setOldConfigVersion("net.minecraft", m_settings->get("IntendedVersion").toString());
     auto setting = m_settings->getSetting("LWJGLVersion");
     m_components->setOldConfigVersion("org.lwjgl", m_settings->get("LWJGLVersion").toString());
@@ -124,14 +129,14 @@ QString MinecraftInstance::typeName() const
     return "Minecraft";
 }
 
-std::shared_ptr<ComponentList> MinecraftInstance::getComponentList() const
+std::shared_ptr<PackProfile> MinecraftInstance::getPackProfile() const
 {
     return m_components;
 }
 
 QSet<QString> MinecraftInstance::traits() const
 {
-    auto components = getComponentList();
+    auto components = getPackProfile();
     if (!components)
     {
         return {"version-incomplete"};
@@ -265,7 +270,7 @@ QStringList MinecraftInstance::getNativeJars() const
 QStringList MinecraftInstance::extraArguments() const
 {
     auto list = BaseInstance::extraArguments();
-    auto version = getComponentList();
+    auto version = getPackProfile();
     if (!version)
         return list;
     auto jarMods = getJarMods();

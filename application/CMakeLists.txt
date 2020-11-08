@@ -1,8 +1,5 @@
 project(application)
 
-######## Configure the file with build properties ########
-configure_file("${PROJECT_SOURCE_DIR}/BuildConfig.cpp.in" "${PROJECT_BINARY_DIR}/BuildConfig.cpp")
-
 ################################ FILES ################################
 
 ######## Sources and headers ########
@@ -11,8 +8,6 @@ SET(MULTIMC_SOURCES
     main.cpp
     MultiMC.h
     MultiMC.cpp
-    BuildConfig.h
-    ${PROJECT_BINARY_DIR}/BuildConfig.cpp
     UpdateController.cpp
     UpdateController.h
 
@@ -129,6 +124,10 @@ SET(MULTIMC_SOURCES
     # GUI - platform pages
     pages/modplatform/VanillaPage.cpp
     pages/modplatform/VanillaPage.h
+    pages/modplatform/ftb/FtbModel.cpp
+    pages/modplatform/ftb/FtbModel.h
+    pages/modplatform/ftb/FtbPage.cpp
+    pages/modplatform/ftb/FtbPage.h
     pages/modplatform/legacy_ftb/Page.cpp
     pages/modplatform/legacy_ftb/Page.h
     pages/modplatform/legacy_ftb/ListModel.h
@@ -138,6 +137,10 @@ SET(MULTIMC_SOURCES
     pages/modplatform/twitch/TwitchModel.h
     pages/modplatform/twitch/TwitchPage.cpp
     pages/modplatform/twitch/TwitchPage.h
+    pages/modplatform/technic/TechnicModel.cpp
+    pages/modplatform/technic/TechnicModel.h
+    pages/modplatform/technic/TechnicPage.cpp
+    pages/modplatform/technic/TechnicPage.h
     pages/modplatform/ImportPage.cpp
     pages/modplatform/ImportPage.h
 
@@ -255,8 +258,10 @@ SET(MULTIMC_UIS
 
     # Platform pages
     pages/modplatform/VanillaPage.ui
+    pages/modplatform/ftb/FtbPage.ui
     pages/modplatform/legacy_ftb/Page.ui
     pages/modplatform/twitch/TwitchPage.ui
+    pages/modplatform/technic/TechnicPage.ui
     pages/modplatform/ImportPage.ui
 
     # Dialogs
